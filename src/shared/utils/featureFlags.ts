@@ -211,6 +211,23 @@ export function isProxySkipRecentlyFailedEnabled(): boolean {
 }
 
 /**
+ * Rotation attribution (skipped-account log lines, per-account rotation state,
+ * masked serving-account id and request correlation on proxy log entries).
+ * Opt-in; an unreadable flag store keeps it hidden (fail-safe off).
+ */
+export function isRotationAttributionEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("ROTATION_ATTRIBUTION");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve ROTATION_ATTRIBUTION, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
  * Pool egress observation panel (#13581): read-only dashboard line under a proxy pool.
  * Opt-in; an unreadable flag store keeps it hidden.
  */
@@ -358,6 +375,23 @@ export function isOpencodeParkAndResumeEnabled(): boolean {
   } catch (error) {
     console.error(
       "[featureFlags] Failed to resolve OPENCODE_PARK_AND_RESUME, defaulting to disabled:",
+      error instanceof Error ? error.message : error
+    );
+    return false;
+  }
+}
+
+/**
+ * Stream readiness stall retry. Opt-in: when off, a stalled first body fails
+ * the request without a retry. Fail closed: an unreadable flag store keeps
+ * the pre-flag behavior (disabled).
+ */
+export function isStreamReadinessStallRetryEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_READINESS_STALL_RETRY");
+  } catch (error) {
+    console.error(
+      "[featureFlags] Failed to resolve STREAM_READINESS_STALL_RETRY, defaulting to disabled:",
       error instanceof Error ? error.message : error
     );
     return false;
